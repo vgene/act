@@ -306,9 +306,12 @@ func (rc *RunContext) startJobContainer() common.Executor {
 			rc.JobContainer.Pull(rc.Config.ForcePull),
 			rc.stopJobContainer(),
 			rc.JobContainer.Create(rc.Config.ContainerCapAdd, rc.Config.ContainerCapDrop),
+			// copy the node file
+			rc.JobContainer.CopyDir("/usr/local/bin/", "/tmp/node_file", false),
 			rc.JobContainer.Start(false),
 			// make github home if not exists
 			rc.JobContainer.Exec([]string{"mkdir", "-p", "/github/home"}, make(map[string]string), "", ""),
+			rc.JobContainer.Exec([]string{"mv", "/usr/local/bin/node_file/node", "/usr/local/bin/node"}, make(map[string]string), "", ""),
 			rc.JobContainer.Copy(rc.JobContainer.GetActPath()+"/", &container.FileEntry{
 				Name: "workflow/event.json",
 				Mode: 0o644,
