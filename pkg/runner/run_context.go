@@ -230,6 +230,9 @@ func (rc *RunContext) startHostEnvironment() common.Executor {
 
 func (rc *RunContext) startJobContainer() common.Executor {
 	return func(ctx context.Context) error {
+		if rc.Env["GITHUB_WORKSPACE"] != "" {
+			rc.Config.Workdir = rc.Env["GITHUB_WORKSPACE"]
+		}
 		logger := common.Logger(ctx)
 		image := rc.platformImage(ctx)
 		rawLogger := logger.WithField("raw_output", true)
@@ -251,6 +254,12 @@ func (rc *RunContext) startJobContainer() common.Executor {
 		name := rc.jobContainerName()
 
 		envList := make([]string, 0)
+
+		// set the home dir
+
+		if rc.Env["HOME"] != "" {
+			envList = append(envList, fmt.Sprintf("%s=%s", "HOME", rc.Env["HOME"]))
+		}
 
 		envList = append(envList, fmt.Sprintf("%s=%s", "RUNNER_TOOL_CACHE", "/opt/hostedtoolcache"))
 		envList = append(envList, fmt.Sprintf("%s=%s", "RUNNER_OS", "Linux"))
@@ -298,6 +307,8 @@ func (rc *RunContext) startJobContainer() common.Executor {
 			rc.stopJobContainer(),
 			rc.JobContainer.Create(rc.Config.ContainerCapAdd, rc.Config.ContainerCapDrop),
 			rc.JobContainer.Start(false),
+			// make github home if not exists
+			rc.JobContainer.Exec([]string{"mkdir", "-p", "/github/home"}, make(map[string]string), "", ""),
 			rc.JobContainer.Copy(rc.JobContainer.GetActPath()+"/", &container.FileEntry{
 				Name: "workflow/event.json",
 				Mode: 0o644,
@@ -646,7 +657,9 @@ func (rc *RunContext) getGithubContext(ctx context.Context) *model.GithubContext
 	}
 	if rc.JobContainer != nil {
 		ghc.EventPath = rc.JobContainer.GetActPath() + "/workflow/event.json"
-		ghc.Workspace = rc.JobContainer.ToContainerPath(rc.Config.Workdir)
+		if ghc.Workspace == "" {
+			ghc.Workspace = rc.JobContainer.ToContainerPath(rc.Config.Workdir)
+		}
 	}
 
 	if ghc.RunID == "" {
