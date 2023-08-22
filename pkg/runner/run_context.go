@@ -119,6 +119,8 @@ func (rc *RunContext) GetBindsAndMounts() ([]string, map[string]string) {
 		binds = append(binds, fmt.Sprintf("%s:%s", daemonPath, "/var/run/docker.sock"))
 	}
 
+	binds = append(binds, fmt.Sprintf("%s:%s", "/tmp", "/tmp"))
+
 	ext := container.LinuxContainerEnvironmentExtensions{}
 
 	mounts := map[string]string{
