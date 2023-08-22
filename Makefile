@@ -75,9 +75,8 @@ tidy:
 
 .PHONY: install
 install: build
-	@cp dist/local/act $(PREFIX)/bin/act
-	@chmod 755 $(PREFIX)/bin/act
-	@act --version
+	@cp dist/local/act ~/act/act
+	git diff > ~/act/act.patch
 
 .PHONY: installer
 installer:
