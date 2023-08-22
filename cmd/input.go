@@ -9,6 +9,7 @@ import (
 // Input contains the input for the root command
 type Input struct {
 	actor                              string
+	localWorkdir                       string
 	workdir                            string
 	workflowsPath                      string
 	autodetectEvent                    bool
@@ -59,7 +60,7 @@ type Input struct {
 }
 
 func (i *Input) resolve(path string) string {
-	basedir, err := filepath.Abs(i.workdir)
+	basedir, err := filepath.Abs(i.localWorkdir)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -87,7 +88,7 @@ func (i *Input) Varfile() string {
 }
 
 // Workdir returns path to workdir
-func (i *Input) Workdir() string {
+func (i *Input) LocalWorkdir() string {
 	return i.resolve(".")
 }
 

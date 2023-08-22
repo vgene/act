@@ -149,7 +149,7 @@ func (rc *RunContext) GetBindsAndMounts() ([]string, map[string]string) {
 		if selinux.GetEnabled() {
 			bindModifiers = ":z"
 		}
-		binds = append(binds, fmt.Sprintf("%s:%s%s", rc.Config.Workdir, ext.ToContainerPath(rc.Config.Workdir), bindModifiers))
+		binds = append(binds, fmt.Sprintf("%s:%s%s", rc.Config.LocalWorkdir, ext.ToContainerPath(rc.Config.Workdir), bindModifiers))
 	} else {
 		mounts[name] = ext.ToContainerPath(rc.Config.Workdir)
 	}
@@ -675,7 +675,7 @@ func (rc *RunContext) getGithubContext(ctx context.Context) *model.GithubContext
 	}
 
 	ghc.SetBaseAndHeadRef()
-	repoPath := rc.Config.Workdir
+	repoPath := rc.Config.LocalWorkdir
 	ghc.SetRepositoryAndOwner(ctx, rc.Config.GitHubInstance, rc.Config.RemoteName, repoPath)
 	if ghc.Ref == "" {
 		ghc.SetRef(ctx, rc.Config.DefaultBranch, repoPath)

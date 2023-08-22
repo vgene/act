@@ -72,6 +72,7 @@ func Execute(ctx context.Context, version string) {
 	rootCmd.PersistentFlags().StringVarP(&input.actor, "actor", "a", "nektos/act", "user that triggered the event")
 	rootCmd.PersistentFlags().StringVarP(&input.workflowsPath, "workflows", "W", "./.github/workflows/", "path to workflow file(s)")
 	rootCmd.PersistentFlags().BoolVarP(&input.noWorkflowRecurse, "no-recurse", "", false, "Flag to disable running workflows from subdirectories of specified path in '--workflows'/'-W' flag")
+	rootCmd.PersistentFlags().StringVarP(&input.localWorkdir, "local-directory", "L", ".", "local working directory")
 	rootCmd.PersistentFlags().StringVarP(&input.workdir, "directory", "C", ".", "working directory")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVar(&input.jsonLogger, "json", false, "Output logs in json format")
@@ -580,7 +581,8 @@ func newRunCommand(ctx context.Context, input *Input) func(*cobra.Command, []str
 			ForcePull:                          input.forcePull,
 			ForceRebuild:                       input.forceRebuild,
 			ReuseContainers:                    input.reuseContainers,
-			Workdir:                            input.Workdir(),
+			LocalWorkdir:                       input.LocalWorkdir(),
+			Workdir:                            input.workdir,
 			ActionCacheDir:                     input.actionCachePath,
 			BindWorkdir:                        input.bindWorkdir,
 			LogOutput:                          !input.noOutput,

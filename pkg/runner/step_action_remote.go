@@ -118,7 +118,7 @@ func (sar *stepActionRemote) main() common.Executor {
 				}
 				eval := sar.RunContext.NewExpressionEvaluator(ctx)
 				copyToPath := path.Join(sar.RunContext.JobContainer.ToContainerPath(sar.RunContext.Config.Workdir), eval.Interpolate(ctx, sar.Step.With["path"]))
-				return sar.RunContext.JobContainer.CopyDir(copyToPath, sar.RunContext.Config.Workdir+string(filepath.Separator)+".", sar.RunContext.Config.UseGitIgnore)(ctx)
+				return sar.RunContext.JobContainer.CopyDir(copyToPath, sar.RunContext.Config.LocalWorkdir+string(filepath.Separator)+".", sar.RunContext.Config.UseGitIgnore)(ctx)
 			}
 
 			actionDir := fmt.Sprintf("%s/%s", sar.RunContext.ActionCacheDir(), safeFilename(sar.Step.Uses))

@@ -21,6 +21,7 @@ type Runner interface {
 // Config contains the config for a new runner
 type Config struct {
 	Actor                              string                     // the user that triggered the event
+	LocalWorkdir                       string                     // path to the local working directory
 	Workdir                            string                     // path to working directory
 	ActionCacheDir                     string                     // path used for caching action contents
 	BindWorkdir                        bool                       // bind the workdir to the job container

@@ -37,7 +37,7 @@ func (sal *stepActionLocal) main() common.Executor {
 			return nil
 		}
 
-		actionDir := filepath.Join(sal.getRunContext().Config.Workdir, sal.Step.Uses)
+		actionDir := filepath.Join(sal.getRunContext().Config.LocalWorkdir, sal.Step.Uses)
 
 		localReader := func(ctx context.Context) actionYamlReader {
 			_, cpath := getContainerActionPaths(sal.Step, path.Join(actionDir, ""), sal.RunContext)
@@ -101,7 +101,7 @@ func (sal *stepActionLocal) getActionModel() *model.Action {
 
 func (sal *stepActionLocal) getCompositeRunContext(ctx context.Context) *RunContext {
 	if sal.compositeRunContext == nil {
-		actionDir := filepath.Join(sal.RunContext.Config.Workdir, sal.Step.Uses)
+		actionDir := filepath.Join(sal.RunContext.Config.LocalWorkdir, sal.Step.Uses)
 		_, containerActionDir := getContainerActionPaths(sal.getStepModel(), actionDir, sal.RunContext)
 
 		sal.compositeRunContext = newCompositeRunContext(ctx, sal.RunContext, sal, containerActionDir)
