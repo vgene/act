@@ -492,6 +492,8 @@ func (cr *containerReference) extractFromImageEnv(env *map[string]string) common
 }
 
 func (cr *containerReference) exec(cmd []string, env map[string]string, user, workdir string) common.Executor {
+	env["CIBW_TEST_SKIP"] = "*"
+	env["CIBW_ENVIRONMENT_PASS_LINUX"] = "SETUPTOOLS_SCM_PRETEND_VERSION"
 	return func(ctx context.Context) error {
 		logger := common.Logger(ctx)
 		// Fix slashes when running on Windows
