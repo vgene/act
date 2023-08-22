@@ -115,6 +115,7 @@ func (cr *containerReference) Pull(forcePull bool) common.Executor {
 
 func (cr *containerReference) Copy(destPath string, files ...*FileEntry) common.Executor {
 	return common.NewPipelineExecutor(
+		common.NewInfoExecutor("%sdocker copy dst=%s", logPrefix, destPath),
 		cr.connect(),
 		cr.find(),
 		cr.copyContent(destPath, files...),
@@ -153,7 +154,7 @@ func (cr *containerReference) UpdateFromImageEnv(env *map[string]string) common.
 
 func (cr *containerReference) Exec(command []string, env map[string]string, user, workdir string) common.Executor {
 	return common.NewPipelineExecutor(
-		common.NewInfoExecutor("%sdocker exec cmd=[%s] user=%s workdir=%s", logPrefix, strings.Join(command, " "), user, workdir),
+		common.NewInfoExecutor("%sdocker exec cmd=[%s] user=%s workdir=%s env=%v", logPrefix, strings.Join(command, " "), user, workdir, env),
 		cr.connect(),
 		cr.find(),
 		cr.exec(command, env, user, workdir),
@@ -520,6 +521,7 @@ func (cr *containerReference) exec(cmd []string, env map[string]string, user, wo
 			wd = cr.input.WorkingDir
 		}
 		logger.Debugf("Working directory '%s'", wd)
+		logger.Debugf("EnvList '%v'", envList)
 
 		idResp, err := cr.cli.ContainerExecCreate(ctx, cr.id, types.ExecConfig{
 			User:         user,

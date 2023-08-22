@@ -316,6 +316,7 @@ func (rc *RunContext) execJobContainer(cmd []string, env map[string]string, user
 }
 
 func (rc *RunContext) ApplyExtraPath(ctx context.Context, env *map[string]string) {
+	common.Logger(ctx).Debugf("Apply extra env=%v, ExtraPath=%v", *env, rc.ExtraPath)
 	if rc.ExtraPath != nil && len(rc.ExtraPath) > 0 {
 		path := rc.JobContainer.GetPathVariableName()
 		if rc.JobContainer.IsEnvironmentCaseInsensitive() {
@@ -341,6 +342,7 @@ func (rc *RunContext) ApplyExtraPath(ctx context.Context, env *map[string]string
 			(*env)[path] = cpath
 		}
 		(*env)[path] = rc.JobContainer.JoinPathVariable(append(rc.ExtraPath, (*env)[path])...)
+		common.Logger(ctx).Debugf("Applied extra env=%v", *env)
 	}
 }
 
