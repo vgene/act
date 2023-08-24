@@ -341,6 +341,15 @@ func (cr *containerReference) mergeContainerConfigs(ctx context.Context, config 
 		return nil, nil, fmt.Errorf("Cannot split container options: '%s': '%w'", input.Options, err)
 	}
 
+	// handle multiple args case
+	if len(optionsArgs) == 1 {
+		optionsArgs, err = shellquote.Split(optionsArgs[0])
+		if err != nil {
+			return nil, nil, fmt.Errorf("Cannot split container options: '%s': '%w'", input.Options, err)
+	}
+
+	}
+
 	err = flags.Parse(optionsArgs)
 	if err != nil {
 		return nil, nil, fmt.Errorf("Cannot parse container options: '%s': '%w'", input.Options, err)
